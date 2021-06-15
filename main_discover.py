@@ -4,8 +4,8 @@ import threading
 import queue
 
 import global_variables as _var
-from ARP.arp_scan import get_network_devices, get_mac
-from ARP.xiaomi_mac_filter import filter, order
+from network.arp_scan import get_network_devices, get_mac
+from network.xiaomi_mac_filter import filter, order
 
 
 class GUI_DISCOVER():
