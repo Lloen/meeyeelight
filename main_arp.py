@@ -49,10 +49,10 @@ class GUI_MAIN_ARP():
         self._var.this['mac'] = get_if_hwaddr(self._var.interfaces['attack'])
         self._var.this['ip'] = get_if_addr(self._var.interfaces['attack'])
         self._var.this['ip_gateway'] = conf.route.route()[2]
+        self._var.hotspot['ssid'] = "yeelink-light-color1_miap5332"
+        self._var.hotspot['gateway'] = "192.168.13.1"
 
         self.root.destroy()
 
     def arp_gui(self):
         self.root.focus()
-        self.FRAME_arp.grid()
-        self.SUB_FRAME_show_arp.grid()
