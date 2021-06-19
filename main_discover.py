@@ -32,10 +32,6 @@ class GUI_DISCOVER():
         self.LB_yeelight_MAC = tk.Label(self.SUB_FRAME_discovery, text="Yeelight MAC:")
         self.EN_yeelight_MAC = tk.Entry(self.SUB_FRAME_discovery, textvariable=self.yeelight_mac)
         self.BTN_yeelight_MAC = tk.Button(self.SUB_FRAME_discovery, text="Get MAC", command=lambda: self.set_MAC_yeelight())
-        self.LB_phone_IP = tk.Label(self.SUB_FRAME_discovery, text="Phone IP:")
-        self.EN_phone_IP = tk.Entry(self.SUB_FRAME_discovery, textvariable=self.phone_ip)
-        self.LB_phone_MAC = tk.Label(self.SUB_FRAME_discovery, text="Phone MAC:")
-        self.EN_phone_MAC = tk.Entry(self.SUB_FRAME_discovery, textvariable=self.phone_mac)
         self.BTN_phone_MAC = tk.Button(self.SUB_FRAME_discovery, text="Get MAC", command=lambda: self.set_MAC_phone())
         self.frames = [tk.PhotoImage(file=self.media_directory + "/loading_network.gif", format="gif -index %i" %(i)) for i in range(13)]
         self.LB_loading_discover = tk.Label(self.FRAME_discover)
@@ -50,16 +46,9 @@ class GUI_DISCOVER():
         self.LB_yeelight_MAC.grid(row=3, column=0)
         self.EN_yeelight_MAC.grid(row=4, column=0)
         self.BTN_yeelight_MAC.grid(row=5, column=0)
-        self.LB_phone_IP.grid(row=1, column=1)
-        self.EN_phone_IP.grid(row=2, column=1)
-        self.LB_phone_MAC.grid(row=3, column=1)
-        self.EN_phone_MAC.grid(row=4, column=1)
-        self.BTN_phone_MAC.grid(row=5, column=1)
 
         self.EN_yeelight_IP.config(highlightbackground="#ff0000")
         self.EN_yeelight_MAC.config(highlightbackground="#ff0000")
-        self.EN_phone_IP.config(highlightbackground="#ff0000")
-        self.EN_phone_MAC.config(highlightbackground="#ff0000")
 
         if self._var.options['autodiscovery']:
             self.LB_loading_discover.grid()
@@ -113,21 +102,6 @@ class GUI_DISCOVER():
         self._var.yeelight['ip'] = yeelight_device['ip']
         self._var.yeelight['mac'] = yeelight_device['mac']
 
-    def set_MAC_phone(self):
-        phone_ip = self.phone_ip.get()
-        if self._var.options['autodiscovery']:
-            for device in self._var.network_hosts:
-                if device['ip'] == phone_ip:
-                    mac = device['mac']
-        else:
-            mac = get_mac(self._var.interfaces['attack'], phone_ip)
-
-        if not mac == "":
-            self.EN_phone_MAC.delete(0, tk.END)
-            self.EN_phone_MAC.insert(0, str(mac))
-            self.EN_phone_IP.config(highlightbackground="#006600")
-            self.EN_phone_MAC.config(highlightbackground="#006600")
-
     def set_MAC_yeelight(self):
         yeelight_ip = self.phone_ip.get()
         if self._var.options['autodiscovery']:
@@ -138,10 +112,10 @@ class GUI_DISCOVER():
             mac = get_mac(self._var.interfaces['attack'], yeelight_ip)
 
         if not mac == "":
-            self.EN_yeelight_ip_MAC.delete(0, tk.END)
-            self.EN_yeelight_ip_MAC.insert(0, str(mac))
-            self.EN_yeelight_ip_IP.config(highlightbackground="#006600")
-            self.EN_yeelight_ip_MAC.config(highlightbackground="#006600")
+            self.EN_yeelight_MAC.delete(0, tk.END)
+            self.EN_yeelight_MAC.insert(0, str(mac))
+            self.EN_yeelight_IP.config(highlightbackground="#006600")
+            self.EN_yeelight_IP.config(highlightbackground="#006600")
 
     # Function to play GIF
     def update(self, ind):
