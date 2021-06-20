@@ -80,8 +80,6 @@ class GUI_DISCOVER():
         # Change Global Variables
         self._var.yeelight['ip'] = self.yeelight_ip.get()
         self._var.yeelight['mac'] = self.yeelight_mac.get()
-        self._var.phone['ip'] = self.phone_ip.get()
-        self._var.phone['mac'] = self.phone_mac.get()
         # Get Gateway's MAC
         if self._var.options['autodiscovery']:
             for device in self._var.network_hosts:
