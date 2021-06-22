@@ -6,5 +6,3 @@ mac = ""
 
 for sent, received in ans:
     mac = received.hwsrc
-
-print(mac)
