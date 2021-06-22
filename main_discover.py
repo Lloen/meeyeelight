@@ -16,8 +16,6 @@ class GUI_DISCOVER():
         self.root.resizable(False, False)
 
         self.media_directory = os.getcwd() + "/media"
-        self.phone_ip = tk.StringVar()
-        self.phone_mac = tk.StringVar()
         self.yeelight_ip = tk.StringVar()
         self.yeelight_mac = tk.StringVar()
 
@@ -32,7 +30,6 @@ class GUI_DISCOVER():
         self.LB_yeelight_MAC = tk.Label(self.SUB_FRAME_discovery, text="Yeelight MAC:")
         self.EN_yeelight_MAC = tk.Entry(self.SUB_FRAME_discovery, textvariable=self.yeelight_mac)
         self.BTN_yeelight_MAC = tk.Button(self.SUB_FRAME_discovery, text="Get MAC", command=lambda: self.set_MAC_yeelight())
-        self.BTN_phone_MAC = tk.Button(self.SUB_FRAME_discovery, text="Get MAC", command=lambda: self.set_MAC_phone())
         self.frames = [tk.PhotoImage(file=self.media_directory + "/loading_network.gif", format="gif -index %i" %(i)) for i in range(13)]
         self.LB_loading_discover = tk.Label(self.FRAME_discover)
 
@@ -101,13 +98,9 @@ class GUI_DISCOVER():
         self._var.yeelight['mac'] = yeelight_device['mac']
 
     def set_MAC_yeelight(self):
-        yeelight_ip = self.phone_ip.get()
-        if self._var.options['autodiscovery']:
-            for device in self._var.network_hosts:
-                if device['ip'] == yeelight_ip:
-                    mac = device['mac']
-        else:
-            mac = get_mac(self._var.interfaces['attack'], yeelight_ip)
+        yeelight_ip = self.yeelight_ip.get()
+        mac = get_mac(self._var.interfaces['attack'], yeelight_ip)
+
 
         if not mac == "":
             self.EN_yeelight_MAC.delete(0, tk.END)
