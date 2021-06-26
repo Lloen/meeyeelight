@@ -62,6 +62,3 @@ class GUI_MAIN_IFACE():
         self._var.hotspot['ssid'] = "Malicious WLAN"
 
         self.root.destroy()
-
-    def arp_gui(self):
-        self.root.focus()
