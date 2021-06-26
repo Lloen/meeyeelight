@@ -28,7 +28,7 @@ def getDefaultInterface(returnNet=True):
 
 def get_network_devices():
     network_ip = getDefaultInterface()
-    ans, unans = srp(Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst=network_ip), retry=-2, timeout=5, verbose=0)
+    ans, unans = srp(Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst=network_ip), retry=-2, timeout=2, verbose=0)
 
     devices = []
 
