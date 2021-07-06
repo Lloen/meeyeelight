@@ -22,6 +22,3 @@ def encrypt(message, token):
 
 def get_md5(message):
     return md5(message).hexdigest()
-
-if __name__ == "__main__":
-    decrypt('f7c3ddc5431ec7b7a5eaf03a8659e6e19c0d1cc5d09d5136c52f0a3b897881dea776e5a94d69e12e1da18fc51d6054e7', '6615d80df9d8732350d9716b2becef6c')
