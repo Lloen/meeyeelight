@@ -1,10 +1,7 @@
 from global_variables import GlobalData
-from main_mitm import GUI_MITM
-from scapy.all import *
+from main_control import GUI_CONTROL
 
-
-
-def main():
+if __name__ == '__main__':
     _var = GlobalData()
     _var.malicious_yeelight['ssid'] = "yeelink-light-color1_miap5332"
     _var.malicious_yeelight['gateway'] = "192.168.13.1"
@@ -16,8 +13,4 @@ def main():
     _var.ssid['channel'] = "2"
     _var.hotspot['ssid'] = "Malicious_WLAN"
     _var.hotspot['password'] = "maliciouswlan123"
-    GUI_MITM(_var)
-
-
-if __name__ == '__main__':
-    main()
+    GUI_CONTROL(_var)

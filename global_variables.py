@@ -24,3 +24,6 @@ class GlobalData:
 
     # List of interfaces and their selected use
     interfaces: dict = field(default_factory=dict)
+
+    ssid: dict = field(default_factory=dict)
+

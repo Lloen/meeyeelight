@@ -1,7 +1,7 @@
 import os
 
 def create_hotspot(iface, ssid, password):
-    create_hotspot_cmd = f"create_ap {iface} enp0s25 {ssid} {password} --no-virt"
+    create_hotspot_cmd = f"sudo create_ap {iface} enp0s25 {ssid} {password} --no-virt"
     try:
         if os.system(create_hotspot_cmd) != 0:
             raise OSError
@@ -9,7 +9,6 @@ def create_hotspot(iface, ssid, password):
         pass
     else:
         return True
-
 
 def create_malicious_yeelight(iface, ssid, gateway_ip, new_mac):
     iface_down_cmd = f"sudo ifconfig {iface} down"
@@ -21,6 +20,16 @@ def create_malicious_yeelight(iface, ssid, gateway_ip, new_mac):
     os.system(iface_up_cmd)
     try:
         if os.system(create_malicious_yeelight_cmd) != 0:
+            raise OSError
+    except OSError:
+        pass
+    else:
+        return True
+
+def stop_hotspot(iface):
+    stop_hotspot_cmd = f"sudo create_ap --stop {iface}"
+    try:
+        if os.system(stop_hotspot_cmd) != 0:
             raise OSError
     except OSError:
         pass
